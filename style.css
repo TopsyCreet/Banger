@@ -1,0 +1,494 @@
+/* ══════════════════════════════════════════════
+   BANGER — Nigerian Rhythm Game Styles
+   ══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Rajdhani:wght@400;600;700&display=swap');
+
+:root {
+  --clr-bg: #050810;
+  --clr-green: #00e676;
+  --clr-gold: #ffd600;
+  --clr-red: #ff1744;
+  --clr-purple: #e040fb;
+  --clr-blue: #2979ff;
+  --clr-white: #f5f5f5;
+  --font-display: 'Black Han Sans', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--clr-bg);
+  font-family: var(--font-body);
+  color: var(--clr-white);
+}
+
+#game-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+
+/* ─────────────── SCREENS ─────────────── */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.screen.active {
+  display: flex;
+  pointer-events: all;
+}
+
+/* ─────────────── MENU ─────────────── */
+#screen-menu {
+  background: linear-gradient(160deg, rgba(5,8,16,0.95) 60%, rgba(0,50,20,0.8));
+  gap: 1.4rem;
+}
+
+.menu-logo {
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 15vw, 8rem);
+  background: linear-gradient(135deg, var(--clr-gold), var(--clr-green), var(--clr-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  line-height: 1;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 20px var(--clr-gold)); }
+  50%       { filter: drop-shadow(0 0 40px var(--clr-green)); }
+}
+
+.logo-sub {
+  font-size: 1.1rem;
+  color: var(--clr-green);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+}
+
+.menu-story {
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.75);
+  max-width: 380px;
+}
+
+.menu-story strong { color: var(--clr-gold); }
+
+/* Song Cards */
+.song-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: min(420px, 92vw);
+}
+
+.song-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.song-card.active {
+  border-color: var(--clr-gold);
+  background: rgba(255,214,0,0.08);
+  box-shadow: 0 0 20px rgba(255,214,0,0.15);
+}
+
+.song-card.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.song-card:not(.locked):hover {
+  border-color: var(--clr-green);
+  background: rgba(0,230,118,0.08);
+}
+
+.song-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--clr-white);
+}
+
+.song-meta {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 0.2rem;
+}
+
+/* Key Legend */
+.key-legend {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.key-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px; height: 38px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-bottom: 3px solid rgba(255,255,255,0.5);
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--clr-white);
+}
+
+.key-name {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.menu-hint {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.35);
+  margin-top: -0.5rem;
+}
+
+/* ─────────────── BUTTONS ─────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--clr-green), #00a854);
+  border: none;
+  border-radius: 50px;
+  padding: 0.85rem 2.5rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: #000;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(0,230,118,0.4);
+}
+
+.btn-primary:hover, .btn-primary:active {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0,230,118,0.6);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50px;
+  padding: 0.7rem 2rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--clr-white);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--clr-white);
+  background: rgba(255,255,255,0.05);
+}
+
+/* ─────────────── HUD ─────────────── */
+#screen-hud {
+  pointer-events: none;
+  background: none;
+}
+
+#screen-hud.active { pointer-events: none; }
+#screen-hud.active #btn-pause,
+#screen-hud.active #mobile-lanes { pointer-events: all; }
+
+#hud-top {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(to bottom, rgba(5,8,16,0.9), transparent);
+}
+
+#hud-score {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--clr-gold);
+  line-height: 1;
+}
+
+#hud-score-label, #hud-combo-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.5);
+}
+
+#hud-center {
+  text-align: center;
+  flex: 1;
+  padding: 0 1rem;
+}
+
+#hud-song-name {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+#hud-progress-wrap {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#hud-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--clr-green), var(--clr-gold));
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+#hud-combo-wrap {
+  text-align: right;
+  min-width: 80px;
+}
+
+#hud-combo {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--clr-green);
+  line-height: 1;
+}
+
+#hud-multiplier {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--clr-purple);
+  margin-top: 0.1rem;
+}
+
+/* Health Bar */
+#hud-health-wrap {
+  position: fixed;
+  top: 72px; left: 0; right: 0;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+}
+
+#hud-health-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--clr-red), var(--clr-gold), var(--clr-green));
+  transition: width 0.2s ease;
+}
+
+/* Judgement Text */
+#hud-judge {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  pointer-events: none;
+  text-shadow: 0 0 20px currentColor;
+  animation: judge-pop 0.4s ease forwards;
+}
+
+#hud-judge.hidden { display: none; }
+
+@keyframes judge-pop {
+  0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  60%  { transform: translate(-50%, -60%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -80%) scale(1);   opacity: 0; }
+}
+
+/* Mobile Lane Buttons */
+#mobile-lanes {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  height: clamp(80px, 18vh, 120px);
+}
+
+.mobile-btn {
+  flex: 1;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  border-top: 3px solid var(--clr);
+  color: var(--clr);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.mobile-btn:active, .mobile-btn.pressed {
+  background: color-mix(in srgb, var(--clr) 25%, transparent);
+}
+
+.m-key {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.m-name {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  text-align: center;
+}
+
+#btn-pause {
+  position: fixed;
+  top: 12px; right: 12px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: white;
+  z-index: 20;
+}
+
+/* ─────────────── PAUSE ─────────────── */
+#screen-pause {
+  background: rgba(5,8,16,0.85);
+  backdrop-filter: blur(10px);
+}
+
+.overlay-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.overlay-card h2 {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  color: var(--clr-gold);
+}
+
+/* ─────────────── RESULTS ─────────────── */
+#screen-results {
+  background: linear-gradient(160deg, rgba(5,8,16,0.96) 50%, rgba(0,30,60,0.9));
+}
+
+.results-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: min(500px, 95vw);
+}
+
+.results-rank {
+  font-family: var(--font-display);
+  font-size: 6rem;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--clr-gold), #ff8800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px var(--clr-gold));
+  animation: rank-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes rank-appear {
+  from { transform: scale(0) rotate(-20deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+}
+
+.results-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--clr-green);
+}
+
+.results-song {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.results-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.stat-val {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--clr-white);
+  line-height: 1;
+}
+
+.stat-key {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.4);
+}
+
+.results-message {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.65);
+  text-align: center;
+  font-style: italic;
+  min-height: 1.5em;
+}

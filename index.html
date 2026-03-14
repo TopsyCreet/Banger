@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>BANGER — Nigerian Rhythm Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Three.js Canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- ═══════════════════ MENU SCREEN ═══════════════════ -->
+  <div id="screen-menu" class="screen active">
+    <div class="menu-logo">
+      <div class="logo-text">BANGER</div>
+      <div class="logo-sub">🎵 Nigerian Rhythm Game</div>
+    </div>
+    <div class="menu-story">
+      <p>You are a broke producer from <strong>Mushin, Lagos.</strong></p>
+      <p>One beat away from blowing up.</p>
+    </div>
+
+    <div class="song-select">
+      <div class="song-card active" data-song="lagos-nights">
+        <div class="song-title">Lagos Nights</div>
+        <div class="song-meta">Afrobeats · 105 BPM · ★★☆ Normal</div>
+      </div>
+      <div class="song-card locked" data-song="surulere-bounce">
+        <div class="song-title">🔒 Surulere Bounce</div>
+        <div class="song-meta">Afro-fusion · 112 BPM · ★★★ Hard</div>
+      </div>
+      <div class="song-card locked" data-song="amapiano-eko">
+        <div class="song-title">🔒 Amapiano Eko</div>
+        <div class="song-meta">Amapiano · 115 BPM · ★★★ Expert</div>
+      </div>
+    </div>
+
+    <div class="key-legend">
+      <div class="key-item">
+        <span class="key">A</span><span class="key-name">Drum</span>
+      </div>
+      <div class="key-item">
+        <span class="key">S</span><span class="key-name">Bass</span>
+      </div>
+      <div class="key-item">
+        <span class="key">D</span><span class="key-name">Guitar</span>
+      </div>
+      <div class="key-item">
+        <span class="key">F</span><span class="key-name">Shaker</span>
+      </div>
+      <div class="key-item">
+        <span class="key">SPC</span><span class="key-name">Talking Drum</span>
+      </div>
+    </div>
+
+    <button id="btn-play" class="btn-primary">MAKE A BANGER →</button>
+    <div class="menu-hint">Tap/click the lane buttons on mobile</div>
+  </div>
+
+  <!-- ═══════════════════ HUD (during play) ═══════════════════ -->
+  <div id="screen-hud" class="screen">
+
+    <div id="hud-top">
+      <div id="hud-score-wrap">
+        <div id="hud-score">0</div>
+        <div id="hud-score-label">SCORE</div>
+      </div>
+      <div id="hud-center">
+        <div id="hud-song-name">Lagos Nights</div>
+        <div id="hud-progress-wrap">
+          <div id="hud-progress-bar"></div>
+        </div>
+      </div>
+      <div id="hud-combo-wrap">
+        <div id="hud-combo">0</div>
+        <div id="hud-combo-label">COMBO</div>
+        <div id="hud-multiplier">×1</div>
+      </div>
+    </div>
+
+    <div id="hud-health-wrap">
+      <div id="hud-health-bar"></div>
+    </div>
+
+    <div id="hud-judge" class="hidden"></div>
+
+    <!-- Mobile lane tap buttons -->
+    <div id="mobile-lanes">
+      <button class="mobile-btn" data-lane="0" style="--clr:#ff3333">
+        <span class="m-key">A</span>
+        <span class="m-name">DRUM</span>
+      </button>
+      <button class="mobile-btn" data-lane="1" style="--clr:#33ff88">
+        <span class="m-key">S</span>
+        <span class="m-name">BASS</span>
+      </button>
+      <button class="mobile-btn" data-lane="2" style="--clr:#3388ff">
+        <span class="m-key">D</span>
+        <span class="m-name">GUITAR</span>
+      </button>
+      <button class="mobile-btn" data-lane="3" style="--clr:#ffcc00">
+        <span class="m-key">F</span>
+        <span class="m-name">SHAKER</span>
+      </button>
+      <button class="mobile-btn" data-lane="4" style="--clr:#ff44ff">
+        <span class="m-key">SPC</span>
+        <span class="m-name">TALKING<br>DRUM</span>
+      </button>
+    </div>
+
+    <button id="btn-pause" title="Pause">⏸</button>
+  </div>
+
+  <!-- ═══════════════════ PAUSE SCREEN ═══════════════════ -->
+  <div id="screen-pause" class="screen">
+    <div class="overlay-card">
+      <h2>PAUSED</h2>
+      <button id="btn-resume" class="btn-primary">RESUME</button>
+      <button id="btn-quit" class="btn-secondary">QUIT TO MENU</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ RESULTS SCREEN ═══════════════════ -->
+  <div id="screen-results" class="screen">
+    <div class="results-card">
+      <div id="results-rank" class="results-rank">S</div>
+      <div id="results-title" class="results-title">BANGER!</div>
+      <div id="results-song" class="results-song">Lagos Nights</div>
+
+      <div class="results-stats">
+        <div class="stat"><span class="stat-val" id="res-score">0</span><span class="stat-key">SCORE</span></div>
+        <div class="stat"><span class="stat-val" id="res-combo">0</span><span class="stat-key">MAX COMBO</span></div>
+        <div class="stat"><span class="stat-val" id="res-perfect">0</span><span class="stat-key">PERFECT</span></div>
+        <div class="stat"><span class="stat-val" id="res-good">0</span><span class="stat-key">GOOD</span></div>
+        <div class="stat"><span class="stat-val" id="res-ok">0</span><span class="stat-key">OK</span></div>
+        <div class="stat"><span class="stat-val" id="res-miss">0</span><span class="stat-key">MISS</span></div>
+      </div>
+
+      <div id="results-message" class="results-message"></div>
+
+      <button id="btn-retry" class="btn-primary">PLAY AGAIN</button>
+      <button id="btn-menu" class="btn-secondary">MAIN MENU</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
