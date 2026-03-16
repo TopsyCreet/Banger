@@ -11,14 +11,16 @@ import { ParticleSystem } from './ParticleSystem.js';
 import { Scoring }        from './Scoring.js';
 import { InputHandler }   from './InputHandler.js';
 import { UI }             from './UI.js';
+import { Tutorial }       from './Tutorial.js';
 import { generateBeatMap } from './BeatMap.js';
 import { LANES, SONG_DURATION, TIMING } from './config.js';
 
 const STATES = {
-  MENU:    'menu',
-  PLAYING: 'playing',
-  PAUSED:  'paused',
-  RESULTS: 'results',
+  MENU:     'menu',
+  TUTORIAL: 'tutorial',
+  PLAYING:  'playing',
+  PAUSED:   'paused',
+  RESULTS:  'results',
 };
 
 export class Game {
@@ -34,6 +36,7 @@ export class Game {
 
     this.noteManager  = null;
     this.particles    = null;
+    this._tutorial    = null;
 
     this._raf         = null;
     this._clock       = new THREE.Clock(false);
@@ -59,11 +62,23 @@ export class Game {
     // Input
     this.input.init();
 
+    // Tutorial (created after all sub-systems exist)
+    this._tutorial = new Tutorial({
+      scene3d:     this.scene3d,
+      noteManager: this.noteManager,
+      audio:       this.audio,
+      scoring:     this.scoring,
+      input:       this.input,
+      ui:          this.ui,
+      onComplete:  () => this.startGame(),
+    });
+
     // UI
     this.ui.showScreen('menu');
 
     // Menu buttons
-    document.getElementById('btn-play').addEventListener('click', () => this.startGame());
+    document.getElementById('btn-play').addEventListener('click', () => this._startOrTutorial());
+    document.getElementById('btn-tutorial').addEventListener('click', () => this.startTutorial());
     document.getElementById('btn-pause').addEventListener('click', () => this.pause());
     document.getElementById('btn-resume').addEventListener('click', () => this.resume());
     document.getElementById('btn-quit').addEventListener('click', () => this.quitToMenu());
@@ -85,6 +100,21 @@ export class Game {
   // ─────────────────────────────────────────────
   //  GAME FLOW
   // ─────────────────────────────────────────────
+
+  /** First-time players go to tutorial; returning players go straight to game */
+  _startOrTutorial() {
+    if (localStorage.getItem('banger_tutorial_done')) {
+      this.startGame();
+    } else {
+      this.startTutorial();
+    }
+  }
+
+  startTutorial() {
+    this.state = STATES.TUTORIAL;
+    this._clock.start();
+    this._tutorial.start();
+  }
 
   startGame() {
     this.state = STATES.PLAYING;
@@ -251,6 +281,12 @@ export class Game {
     this._raf = requestAnimationFrame(() => this._loop());
 
     const dt = Math.min(this._clock.getDelta(), 0.05);
+
+    if (this.state === STATES.TUTORIAL) {
+      // Tutorial drives its own song clock and note manager
+      this._tutorial.update(dt);
+      this.particles.update(dt);
+    }
 
     if (this.state === STATES.PLAYING) {
       const currentTime = this.audio.currentTime;

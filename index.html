@@ -55,8 +55,70 @@
       </div>
     </div>
 
-    <button id="btn-play" class="btn-primary">MAKE A BANGER →</button>
+    <div class="menu-btn-group">
+      <button id="btn-play" class="btn-primary">MAKE A BANGER →</button>
+      <button id="btn-tutorial" class="btn-secondary">🎓 HOW TO PLAY</button>
+    </div>
     <div class="menu-hint">Tap/click the lane buttons on mobile</div>
+  </div>
+
+  <!-- ═══════════════════ TUTORIAL SCREEN ═══════════════════ -->
+  <div id="screen-tutorial" class="screen">
+
+    <!-- Phase 0: Welcome -->
+    <div id="tut-welcome" class="tut-panel hidden">
+      <div class="tut-emoji">🎵</div>
+      <h2 class="tut-title">Welcome to BANGER!</h2>
+      <p class="tut-body">You're about to become a music producer.<br>Let's learn how to play — step by step.</p>
+      <div class="tut-starting">Starting in <span id="tut-countdown">3</span>...</div>
+    </div>
+
+    <!-- Phase 1–5: Lane lessons -->
+    <div id="tut-lane" class="tut-panel hidden">
+      <div id="tut-badge"></div>
+      <h2 id="tut-lane-name" class="tut-title"></h2>
+      <div id="tut-key-display" class="tut-key-big"></div>
+      <p id="tut-lane-instruction" class="tut-body"></p>
+      <div class="tut-hit-counter">
+        <span id="tut-hits-done">0</span>
+        <span class="tut-hits-sep">/</span>
+        <span class="tut-hits-total">2</span>
+        <span class="tut-hits-label"> hits to continue</span>
+      </div>
+      <div id="tut-hint" class="tut-hint hidden">
+        👆 Wait for the shape to reach the glow ring, then press the key!
+      </div>
+    </div>
+
+    <!-- Phase 6: All lanes practice -->
+    <div id="tut-practice" class="tut-panel hidden">
+      <div class="tut-emoji">🎹</div>
+      <h2 class="tut-title">Now try all 5!</h2>
+      <p class="tut-body">All lanes together. No pressure — just feel the beat.</p>
+      <button id="btn-tut-done" class="btn-primary">I'm Ready! →</button>
+    </div>
+
+    <!-- Phase 7: Complete -->
+    <div id="tut-complete" class="tut-panel hidden">
+      <div class="tut-emoji">🔥</div>
+      <h2 class="tut-title">You're Ready!</h2>
+      <p class="tut-body">Lagos is waiting. Time to make a BANGER.</p>
+      <button id="btn-tut-play" class="btn-primary">PLAY NOW →</button>
+      <button id="btn-tut-replay" class="btn-secondary">Replay Tutorial</button>
+    </div>
+
+    <!-- Step indicator dots -->
+    <div id="tut-steps">
+      <span class="tut-dot" data-step="0"></span>
+      <span class="tut-dot" data-step="1"></span>
+      <span class="tut-dot" data-step="2"></span>
+      <span class="tut-dot" data-step="3"></span>
+      <span class="tut-dot" data-step="4"></span>
+      <span class="tut-dot" data-step="5"></span>
+      <span class="tut-dot" data-step="6"></span>
+    </div>
+
+    <button id="btn-tut-skip" class="tut-skip-btn">Skip tutorial</button>
   </div>
 
   <!-- ═══════════════════ HUD (during play) ═══════════════════ -->

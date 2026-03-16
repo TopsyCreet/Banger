@@ -17,7 +17,7 @@ export const CAMERA_POS   = { x: 0, y: 7, z: 18 };
 export const CAMERA_LOOK  = { x: 0, y: 0, z: -5 };
 export const HIT_ZONE_Z   = 6;    // where notes should be hit
 export const SPAWN_Z      = -42;  // where notes appear
-export const NOTE_SPEED   = 14;   // units/second (toward camera)
+export const NOTE_SPEED   = 7;    // units/second (toward camera)
 export const LOOK_AHEAD   = (HIT_ZONE_Z - SPAWN_Z) / NOTE_SPEED + 0.05; // seconds
 
 // ── Timing Windows (seconds)
@@ -58,6 +58,10 @@ export const JUDGE_STYLES = {
 
 // ── Note shapes per lane (Three.js geometry types)
 export const NOTE_SHAPES = ['box', 'cylinder', 'octahedron', 'sphere', 'torus'];
+
+// ── Tutorial speeds
+export const TUTORIAL_NOTE_SPEED = 4.5; // very slow demo notes
+export const TUTORIAL_LANE_SPEED = 6;   // slightly faster for all-lanes practice
 
 // ── Song BPM / data
 export const SONG_BPM = 105;

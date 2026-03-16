@@ -16,7 +16,7 @@ export class UI {
     this._judgeEl    = document.getElementById('hud-judge');
     this._screens    = {};
 
-    ['menu', 'hud', 'pause', 'results'].forEach(id => {
+    ['menu', 'hud', 'pause', 'results', 'tutorial'].forEach(id => {
       this._screens[id] = document.getElementById(`screen-${id}`);
     });
   }
