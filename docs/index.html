@@ -4,14 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>BANGER — Nigerian Rhythm Game</title>
-  <script type="module" crossorigin src="/Banger/assets/index-Zcev0NlW.js"></script>
-  <link rel="modulepreload" crossorigin href="/Banger/assets/three-BGFGMkNH.js">
-  <link rel="stylesheet" crossorigin href="/Banger/assets/index-PCblhiZb.css">
+  <script type="module" crossorigin src="/Banger/assets/index-Dlwvz6Hr.js"></script>
+  <link rel="modulepreload" crossorigin href="/Banger/assets/three-DPKJYWvL.js">
+  <link rel="stylesheet" crossorigin href="/Banger/assets/index-1QUXKtAw.css">
 </head>
 <body>
 
   <!-- Three.js Canvas -->
   <canvas id="game-canvas"></canvas>
+
+  <!-- Piano Tiles overlay (shown during gameplay) -->
+  <div id="piano-tiles" class="piano-tiles">
+    <div class="piano-lanes">
+      <div class="piano-lane" data-lane="0"></div>
+      <div class="piano-lane" data-lane="1"></div>
+      <div class="piano-lane" data-lane="2"></div>
+      <div class="piano-lane" data-lane="3"></div>
+      <div class="piano-lane" data-lane="4"></div>
+    </div>
+    <div class="hit-line"></div>
+  </div>
 
   <!-- ═══════════════════ MENU SCREEN ═══════════════════ -->
   <div id="screen-menu" class="screen active">

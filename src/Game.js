@@ -13,7 +13,7 @@ import { InputHandler }   from './InputHandler.js';
 import { UI }             from './UI.js';
 import { Tutorial }       from './Tutorial.js';
 import { generateBeatMap } from './BeatMap.js';
-import { LANES, SONG_DURATION, TIMING } from './config.js';
+import { LANES, SONG_DURATION, TIMING, HIT_ZONE_Z } from './config.js';
 
 const STATES = {
   MENU:     'menu',
@@ -38,6 +38,9 @@ export class Game {
     this.particles    = null;
     this._tutorial    = null;
 
+    this._pianoTilesEl = document.getElementById('piano-tiles');
+    this._onPianoTileDown = this._onPianoTileDown.bind(this);
+
     this._raf         = null;
     this._clock       = new THREE.Clock(false);
     this._songName    = 'Lagos Nights';
@@ -48,7 +51,7 @@ export class Game {
   async init() {
     // 3D Scene
     this.scene3d.init();
-    this.noteManager = new NoteManager(this.scene3d.scene);
+    this.noteManager = new NoteManager();
     this.particles   = new ParticleSystem(this.scene3d.scene);
 
     // Note miss callback
@@ -145,6 +148,9 @@ export class Game {
     this.ui.updateCombo(0, 1);
     this.ui.updateHealth(100);
     this.ui.updateProgress(0, SONG_DURATION);
+
+    // Piano tiles overlay
+    this._showPianoTiles(true);
   }
 
   pause() {
@@ -171,6 +177,7 @@ export class Game {
     this.noteManager.reset();
     this.input.offAll();
     this.ui.showScreen('menu');
+    this._showPianoTiles(false);
   }
 
   _endGame() {
@@ -191,6 +198,28 @@ export class Game {
       songName: this._songName,
     });
     this.ui.showScreen('results');
+    this._showPianoTiles(false);
+  }
+
+  _showPianoTiles(show) {
+    if (!this._pianoTilesEl) return;
+
+    if (show) {
+      this._pianoTilesEl.classList.add('active');
+      this._pianoTilesEl.addEventListener('pointerdown', this._onPianoTileDown);
+    } else {
+      this._pianoTilesEl.classList.remove('active');
+      this._pianoTilesEl.removeEventListener('pointerdown', this._onPianoTileDown);
+    }
+  }
+
+  _onPianoTileDown(e) {
+    const tile = e.target.closest('.piano-tile');
+    if (!tile) return;
+    const lane = Number(tile.dataset.lane);
+    if (Number.isFinite(lane)) {
+      this._handleLanePress(lane);
+    }
   }
 
   // ─────────────────────────────────────────────
@@ -225,7 +254,7 @@ export class Game {
     // Visual effects
     this.scene3d.flashLane(lane);
     this.particles.burst(
-      LANES[lane].x, 0.5, note.mesh.position.z, lane, judge
+      LANES[lane].x, 0.5, HIT_ZONE_Z, lane, judge
     );
 
     // Audio feedback
@@ -243,7 +272,7 @@ export class Game {
     );
     if (milestone) {
       this._comboMilestones.add(milestone);
-      this.particles.comboFlare(LANES[lane].x, 0.5, note.mesh.position.z, lane);
+      this.particles.comboFlare(LANES[lane].x, 0.5, HIT_ZONE_Z, lane);
       this.ui.flashScreen(LANES[lane].hexStr);
       this.audio.playCrowdCheer();
     }

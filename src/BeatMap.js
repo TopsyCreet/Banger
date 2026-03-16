@@ -3,7 +3,7 @@
 //  Generates procedural Afrobeats note patterns
 // ══════════════════════════════════════════════
 
-import { SONG_BPM, SONG_DURATION } from './config.js';
+import { SONG_BPM, SONG_DURATION, NOTE_SPEED, SPAWN_Y, HIT_ZONE_Y } from './config.js';
 
 /**
  * A note event: { time (seconds), lane (0-4) }
@@ -62,6 +62,8 @@ const MAX_SIMULTANEOUS = {
 };
 
 const SIMULTANEOUS_WINDOW = SIXTEENTH * 2; // how close together notes count as "at once"
+// Minimum gap needed between notes in the same lane so the player can clear one tile before the next arrives.
+const MIN_LANE_GAP = Math.abs(SPAWN_Y - HIT_ZONE_Y) / NOTE_SPEED;
 
 export function generateBeatMap(difficulty = 'normal') {
   const pattern = PATTERNS[difficulty] || PATTERNS.normal;
@@ -75,6 +77,9 @@ export function generateBeatMap(difficulty = 'normal') {
   // Leave 3 seconds of intro silence
   const introOffset = 3.0;
 
+  // Track last note time per lane to avoid overlapping in-flight tiles
+  const lastNoteTimePerLane = Array(5).fill(-Infinity);
+
   for (let bar = 0; bar < totalBars; bar++) {
     const barTime = introOffset + bar * BAR;
     const patternPos = bar % patternBars;  // 0 or 1
@@ -84,32 +89,40 @@ export function generateBeatMap(difficulty = 'normal') {
     const isFillBar = (bar % 8 === 7);
 
     for (let lane = 0; lane < 5; lane++) {
-      // Skip some lanes in easy intros (gradual introduction)
-      if (difficulty === 'easy' && bar < 4 && lane > 2) continue;
-      if (difficulty === 'normal' && bar < 2 && lane === 4) continue;
+    // Skip some lanes in easy intros (gradual introduction)
+    if (difficulty === 'easy' && bar < 4 && lane > 2) continue;
+    if (difficulty === 'normal' && bar < 2 && lane === 4) continue;
 
-      // Drum fill override
-      if (isFillBar && lane === 0) {
-        for (const idx of FILLS.drumFill) {
-          if (idx < 16) {
-            notes.push({ time: barTime + idx * SIXTEENTH, lane });
+    // Drum fill override
+    if (isFillBar && lane === 0) {
+      for (const idx of FILLS.drumFill) {
+        if (idx < 16) {
+          const time = barTime + idx * SIXTEENTH;
+          if (time - lastNoteTimePerLane[lane] >= MIN_LANE_GAP) {
+            notes.push({ time, lane });
+            lastNoteTimePerLane[lane] = time;
           }
         }
-        continue;
       }
+      continue;
+    }
 
-      // Normal pattern
-      for (const idx of pattern[lane]) {
-        const localIdx = idx - noteOffset;
-        if (localIdx >= 0 && localIdx < 16) {
-          const time = barTime + localIdx * SIXTEENTH;
-          // Tiny humanization (±3ms) to feel natural
-          const humanize = (Math.random() - 0.5) * 0.006;
-          notes.push({ time: time + humanize, lane });
+    // Normal pattern
+    for (const idx of pattern[lane]) {
+      const localIdx = idx - noteOffset;
+      if (localIdx >= 0 && localIdx < 16) {
+        const time = barTime + localIdx * SIXTEENTH;
+        // Tiny humanization (±3ms) to feel natural
+        const humanize = (Math.random() - 0.5) * 0.006;
+        const finalTime = time + humanize;
+        if (finalTime - lastNoteTimePerLane[lane] >= MIN_LANE_GAP) {
+          notes.push({ time: finalTime, lane });
+          lastNoteTimePerLane[lane] = finalTime;
         }
       }
     }
   }
+}
 
   // Sort by time
   notes.sort((a, b) => a.time - b.time);

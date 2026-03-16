@@ -13,12 +13,14 @@ export const LANES = [
 ];
 
 // ── 3D Scene
-export const CAMERA_POS   = { x: 0, y: 7, z: 18 };
-export const CAMERA_LOOK  = { x: 0, y: 0, z: -5 };
-export const HIT_ZONE_Z   = 6;    // where notes should be hit (depth)
-export const SPAWN_Z      = -42;  // where notes appear (depth, in front of hit zone)
-export const NOTE_SPEED   = 7;    // units/second (toward hit zone)
-export const LOOK_AHEAD   = Math.abs(SPAWN_Z - HIT_ZONE_Z) / NOTE_SPEED + 0.05; // seconds
+export const CAMERA_POS   = { x: 0, y: 14, z: 12 };
+export const CAMERA_LOOK  = { x: 0, y: 0, z: 0 };
+export const HIT_ZONE_Z   = 0;    // where notes sit in depth
+export const HIT_ZONE_Y   = 0;    // where notes should be hit (vertical)
+export const SPAWN_Z      = 0;    // where notes appear (depth)
+export const SPAWN_Y      = 14;   // where notes appear (vertical/top)
+export const NOTE_SPEED   = 10;   // units/second (toward hit zone)
+export const LOOK_AHEAD   = Math.abs(SPAWN_Y - HIT_ZONE_Y) / NOTE_SPEED + 0.05; // seconds
 
 // ── Timing Windows (seconds)
 export const TIMING = {
