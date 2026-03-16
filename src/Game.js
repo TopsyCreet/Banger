@@ -234,9 +234,67 @@ export class Game {
   _onPianoTileDown(e) {
     const tile = e.target.closest('.piano-tile');
     if (!tile) return;
+
+    // If we can map to a specific note object, hit that note directly (not just lane)
+    const note = tile._note;
+    if (note) {
+      this._handleNoteTap(note);
+      return;
+    }
+
     const lane = Number(tile.dataset.lane);
     if (Number.isFinite(lane)) {
       this._handleLanePress(lane);
+    }
+  }
+
+  _handleNoteTap(note) {
+    if (this.state !== STATES.PLAYING) return;
+    if (!note || note.hit || note.missed) return;
+
+    const currentTime = this.audio.currentTime;
+    const timeDiff = currentTime - note.beatTime;
+    const judge = this.scoring.judge(timeDiff);
+
+    if (!judge) {
+      // too early/late
+      this.scene3d.flashLane(note.lane);
+      return;
+    }
+
+    // Register hit
+    const { pts, multiplier } = this.scoring.registerHit(judge);
+    note.onHit(judge);
+
+    // Visual effects
+    this.scene3d.flashLane(note.lane);
+    this.particles.burst(LANES[note.lane].x, 0.5, HIT_ZONE_Z, note.lane, judge);
+
+    // Audio feedback
+    this.audio.playHitFeedback(note.lane, judge);
+
+    // UI
+    this.ui.showJudge(judge);
+    this.ui.updateScore(this.scoring.score);
+    this.ui.updateCombo(this.scoring.combo, multiplier);
+    this.ui.updateHealth(this.scoring.health);
+
+    // Combo milestones
+    const milestone = [10, 25, 50, 100, 200].find(
+      m => this.scoring.combo >= m && !this._comboMilestones.has(m)
+    );
+    if (milestone) {
+      this._comboMilestones.add(milestone);
+      this.particles.comboFlare(LANES[note.lane].x, 0.5, HIT_ZONE_Z, note.lane);
+      this.ui.flashScreen(LANES[note.lane].hexStr);
+      this._flashHitLine(true);
+      this.audio.playCrowdCheer();
+    }
+
+    // Judge flash
+    if (judge === 'miss') {
+      this.ui.shakeScreen();
+      this._flashHitLine(false);
     }
   }
 

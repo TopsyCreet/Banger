@@ -23,7 +23,11 @@ class NoteObject {
     this.el.style.background = `${LANES[lane].hexStr}22`;
 
     const laneEl = document.querySelector(`.piano-lane[data-lane="${lane}"]`);
-    if (laneEl) laneEl.appendChild(this.el);
+    if (laneEl) {
+      laneEl.appendChild(this.el);
+      // Link DOM element to this NoteObject so taps can hit this note directly
+      this.el._note = this;
+    }
   }
 
   update(currentTime) {

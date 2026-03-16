@@ -2,18 +2,20 @@
    BANGER — Nigerian Rhythm Game Styles
    ══════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Rajdhani:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
 :root {
-  --clr-bg: #050810;
-  --clr-green: #00e676;
-  --clr-gold: #ffd600;
-  --clr-red: #ff1744;
-  --clr-purple: #e040fb;
-  --clr-blue: #2979ff;
-  --clr-white: #f5f5f5;
-  --font-display: 'Black Han Sans', sans-serif;
-  --font-body: 'Rajdhani', sans-serif;
+  --clr-bg: #08090b;
+  --clr-panel: rgba(0, 0, 0, 0.34);
+  --clr-border: rgba(255, 255, 255, 0.18);
+  --clr-hit: rgba(255, 255, 255, 0.32);
+  --clr-hit-strong: rgba(255, 255, 255, 0.62);
+  --clr-accent: #00ffcc;
+  --clr-accent2: #ff0066;
+  --clr-white: #f7f7f7;
+  --clr-text: rgba(255,255,255,0.88);
+  --font-display: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,9 +23,9 @@
 html, body {
   width: 100%; height: 100%;
   overflow: hidden;
-  background: var(--clr-bg);
+  background: linear-gradient(180deg, #07080b 0%, #05060a 55%, #05060a 100%);
   font-family: var(--font-body);
-  color: var(--clr-white);
+  color: var(--clr-text);
 }
 
 #game-canvas {
@@ -339,19 +341,28 @@ html, body {
 
 #hud-top {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(to bottom, rgba(5,8,16,0.9), transparent);
+  width: min(720px, 92vw);
+  padding: 1rem 1.2rem;
+  background: rgba(8, 9, 11, 0.62);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(18px);
+  z-index: 110;
 }
 
 #hud-score {
   font-family: var(--font-display);
   font-size: 2.2rem;
-  color: var(--clr-gold);
+  color: var(--clr-accent);
   line-height: 1;
+  text-shadow: 0 0 12px rgba(0, 255, 204, 0.5);
 }
 
 #hud-score-label, #hud-combo-label {
@@ -398,8 +409,9 @@ html, body {
 #hud-combo {
   font-family: var(--font-display);
   font-size: 2.2rem;
-  color: var(--clr-green);
+  color: var(--clr-accent2);
   line-height: 1;
+  text-shadow: 0 0 14px rgba(255, 0, 102, 0.55);
 }
 
 #hud-multiplier {
@@ -413,14 +425,18 @@ html, body {
 #hud-health-wrap {
   position: fixed;
   top: 72px; left: 0; right: 0;
-  height: 4px;
+  height: 6px;
   background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  margin: 0 auto;
+  width: min(720px, 92vw);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
 }
 
 #hud-health-bar {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, var(--clr-red), var(--clr-gold), var(--clr-green));
+  background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent2));
   transition: width 0.2s ease;
 }
 
@@ -450,29 +466,59 @@ html, body {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   display: flex;
-  height: clamp(80px, 18vh, 120px);
+  height: clamp(80px, 16vh, 110px);
+  padding: 0.6rem;
+  gap: 0.35rem;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 -10px 24px rgba(0,0,0,0.6);
 }
 
 .mobile-btn {
   flex: 1;
-  background: rgba(0,0,0,0.6);
-  border: none;
-  border-top: 3px solid var(--clr);
-  color: var(--clr);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2rem;
-  cursor: pointer;
-  transition: background 0.1s;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  background: rgba(0,0,0,0.42);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 18px;
+  color: rgba(255,255,255,0.85);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.12s ease, background 0.12s ease;
 }
 
-.mobile-btn:active, .mobile-btn.pressed {
-  background: color-mix(in srgb, var(--clr) 25%, transparent);
+.mobile-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(0,0,0,0));
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
+
+.mobile-btn.pressed {
+  transform: translateY(3px);
+}
+
+.mobile-btn.pressed::after {
+  opacity: 1;
+}
+
+.mobile-btn:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.mobile-btn .m-key {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.mobile-btn .m-name {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.55);
+}
+
 
 .m-key {
   font-family: var(--font-display);
