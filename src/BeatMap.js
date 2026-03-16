@@ -55,8 +55,17 @@ const FILLS = {
  * @param {string} difficulty  'easy' | 'normal' | 'hard'
  * @returns {Array<{time: number, lane: number}>} sorted by time
  */
+const MAX_SIMULTANEOUS = {
+  easy:   2,
+  normal: 3,
+  hard:   4,
+};
+
+const SIMULTANEOUS_WINDOW = SIXTEENTH * 2; // how close together notes count as "at once"
+
 export function generateBeatMap(difficulty = 'normal') {
   const pattern = PATTERNS[difficulty] || PATTERNS.normal;
+  const maxSimultaneous = MAX_SIMULTANEOUS[difficulty] || MAX_SIMULTANEOUS.normal;
   const patternBars = 2;  // our pattern is 2 bars long
   const patternDuration = BAR * patternBars;
   const notes = [];
@@ -104,7 +113,24 @@ export function generateBeatMap(difficulty = 'normal') {
 
   // Sort by time
   notes.sort((a, b) => a.time - b.time);
-  return notes;
+
+  // Reduce moments where too many notes appear simultaneously
+  const filtered = [];
+  const window = [];
+
+  for (const note of notes) {
+    // Remove old notes outside the simultaneous window
+    while (window.length && note.time - window[0].time > SIMULTANEOUS_WINDOW) {
+      window.shift();
+    }
+
+    if (window.length < maxSimultaneous) {
+      filtered.push(note);
+      window.push(note);
+    }
+  }
+
+  return filtered;
 }
 
 /**

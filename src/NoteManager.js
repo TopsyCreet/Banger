@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { LANES, HIT_ZONE_Z, SPAWN_Z, NOTE_SPEED, TIMING, NOTE_SHAPES } from './config.js';
 
-const LOOK_AHEAD_SEC = (HIT_ZONE_Z - SPAWN_Z) / NOTE_SPEED + 0.2;
+const LOOK_AHEAD_SEC = Math.abs(SPAWN_Z - HIT_ZONE_Z) / NOTE_SPEED + 0.2;
 const DESPAWN_PAST   = 0.3;  // seconds past hit zone before removal
 
 // ── Per-lane geometry factories
@@ -67,7 +67,7 @@ class NoteObject {
 
   update(currentTime, camera, dt) {
     const timeDiff = this.beatTime - currentTime;
-    const z = HIT_ZONE_Z + timeDiff * NOTE_SPEED;
+    const z = HIT_ZONE_Z - timeDiff * NOTE_SPEED;
     const x = LANES[this.lane].x;
 
     this.mesh.position.set(x, 0.5, z);
