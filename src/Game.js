@@ -201,6 +201,24 @@ export class Game {
     this._showPianoTiles(false);
   }
 
+  _pulsePianoTiles() {
+    if (!this._pianoTilesEl) return;
+    this._pianoTilesEl.classList.add('beat');
+    setTimeout(() => this._pianoTilesEl.classList.remove('beat'), 120);
+  }
+
+  _flashHitLine(combo = false) {
+    const hitLine = document.querySelector('.hit-line');
+    if (!hitLine) return;
+
+    hitLine.classList.add('hit');
+    if (combo) hitLine.classList.add('combo');
+    setTimeout(() => {
+      hitLine.classList.remove('hit');
+      hitLine.classList.remove('combo');
+    }, 140);
+  }
+
   _showPianoTiles(show) {
     if (!this._pianoTilesEl) return;
 
@@ -274,12 +292,14 @@ export class Game {
       this._comboMilestones.add(milestone);
       this.particles.comboFlare(LANES[lane].x, 0.5, HIT_ZONE_Z, lane);
       this.ui.flashScreen(LANES[lane].hexStr);
+      this._flashHitLine(true);
       this.audio.playCrowdCheer();
     }
 
     // Judge flash
     if (judge === 'miss') {
       this.ui.shakeScreen();
+      this._flashHitLine(false);
     }
   }
 
@@ -332,11 +352,9 @@ export class Game {
       );
       if (beatNote && currentTime - this._lastBeatFlash > 0.3) {
         this.scene3d.onBeat(0.6);
+        this._pulsePianoTiles();
         this._lastBeatFlash = currentTime;
       }
-
-      // Progress bar
-      this.ui.updateProgress(currentTime, SONG_DURATION);
 
       // Check song end
       if (currentTime >= SONG_DURATION) {

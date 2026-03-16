@@ -34,6 +34,12 @@ class NoteObject {
     // Move from above view (-20%) down to hit line (approx 80%)
     const yPct = clamped * 100 - 20;
     this.el.style.top = `${yPct}%`;
+
+    // Stretch tile based on speed to produce a "fast sliding" look
+    const stretch = 1 + Math.max(0, (1 - clamped) * 0.75);
+    this.el.style.transform = `scaleY(${stretch})`;
+
+    // Fade in as it appears
     this.el.style.opacity = `${Math.min(1, clamped * 1.2)}`;
   }
 

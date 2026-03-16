@@ -41,11 +41,16 @@ html, body {
   pointer-events: none;
   z-index: 50;
   display: none;
-  background: linear-gradient(120deg, rgba(0,0,0,0.92), rgba(0,0,0,0.75));
+  background: radial-gradient(circle at center top, rgba(255,255,255,0.06), rgba(0,0,0,0.75));
+  touch-action: none;
 }
 
 #piano-tiles.active {
   display: block;
+}
+
+#piano-tiles.beat {
+  background: radial-gradient(circle at center top, rgba(255,255,255,0.16), rgba(0,0,0,0.75));
 }
 
 .piano-lanes {
@@ -58,40 +63,83 @@ html, body {
   flex: 1;
   position: relative;
   overflow: hidden;
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
+
+.piano-lane:last-child {
+  border-right: 1px solid rgba(255,255,255,0.08);
 }
 
 .piano-tile {
   position: absolute;
-  left: 10%;
-  right: 10%;
-  height: 18%;
-  border-radius: 14px;
+  left: 8%;
+  right: 8%;
+  height: 22%;
+  border-radius: 16px;
   background: rgba(255,255,255,0.1);
   border: 2px solid rgba(255,255,255,0.18);
-  box-shadow: 0 18px 30px rgba(0,0,0,0.35);
+  box-shadow: 0 14px 22px rgba(0,0,0,0.35);
   pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   color: rgba(255,255,255,0.9);
   user-select: none;
   touch-action: none;
-  transition: transform 0.08s ease-out;
+  transform-origin: center 20%;
+  transition: transform 0.08s ease-out, opacity 0.15s ease;
 }
 
 .piano-tile:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
+}
+
+.piano-tile.hit {
+  animation: hit-pop 0.25s ease-out forwards;
+}
+
+@keyframes hit-pop {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+
+.piano-tile.miss {
+  animation: miss-flash 0.2s ease-out forwards;
+}
+
+@keyframes miss-flash {
+  0% { background: rgba(255,0,0,0.7); transform: translateX(0); }
+  50% { background: rgba(255,0,0,0.9); transform: translateX(6px); }
+  100% { background: rgba(255,0,0,0); transform: translateX(-6px); opacity: 0; }
 }
 
 .hit-line {
   position: absolute;
   left: 0; right: 0;
-  height: 4px;
-  background: rgba(255,255,255,0.55);
-  bottom: 22%;
-  box-shadow: 0 0 18px rgba(255,255,255,0.35);
+  height: 5px;
+  background: rgba(255,255,255,0.5);
+  bottom: 18%;
+  box-shadow: 0 0 24px rgba(255,255,255,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hit-line.hit {
+  transform: scaleY(1.3);
+  box-shadow: 0 0 30px rgba(255,255,255,0.9);
+}
+
+.hit-line.combo {
+  box-shadow: 0 0 32px rgba(0, 255, 180, 0.9);
+}
+
+@media (max-width: 720px) {
+  .piano-tile {
+    height: 24%;
+    font-size: 1.6rem;
+  }
 }
 
 /* ─────────────── SCREENS ─────────────── */
